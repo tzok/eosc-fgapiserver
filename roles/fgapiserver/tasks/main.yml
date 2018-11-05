@@ -1,20 +1,58 @@
 ---
-- name: install dependencies (git, mysql)
+- name: check if sudo is present
+  stat:
+    path: /usr/bin/sudo
+  register: sudo
+
+- name: install sudo if not present
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - libssl-dev
+    - sudo
+  become: yes
+  become_method: su
+  when: not sudo.stat.exists
+
+- name: create user futuregateway
+  user:
+    createhome: yes
+    name: futuregateway
+    shell: /bin/bash
+    state: present
+  become: yes
+
+- name: install dependencies (git, libmysqlclient-dev, pip)
   apt:
     name: '{{ item }}'
     update_cache: yes
   with_items:
     - git
-    - mysql-server
-    - python-mysqldb
+    - libmysqlclient-dev
+    - python-pip
+  become: true
 
 - name: git-clone main repository
   git:
     dest: '{{ fgapiserver_install_dir }}'
     repo: '{{ fgapiserver_git_repo_url }}'
+  become: true
+  become_user: futuregateway
 
-- name: initialize database
-  mysql_db:
-    name: fgapiserver
-    state: import
-    target: '{{ fgapiserver_install_dir }}/fgapiserver_db.sql'
+- name: install python requirements
+  pip:
+    requirements: '{{ fgapiserver_install_dir }}/requirements.txt'
+  become: true
+
+- name: set db host name to fgdb (value used later in docker-compose.yml)
+  lineinfile:
+    path: '{{ fgapiserver_install_dir }}/fgapiserver.conf'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: '^fgapisrv_dbver.*', line: 'fgapisrv_dbver = 0.0.11' }
+    - { regexp: '^fgapisrv_db_host.*', line: 'fgapisrv_db_host = fgdb' }
+  become: true
+  become_user: futuregateway
