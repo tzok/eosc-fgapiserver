@@ -1,0 +1,58 @@
+---
+- name: check if sudo is present
+  stat:
+    path: /usr/bin/sudo
+  register: sudo
+
+- name: install sudo if not present
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  with_items:
+    - libssl-dev
+    - sudo
+  become: yes
+  become_method: su
+  when: not sudo.stat.exists
+
+- name: create user futuregateway
+  user:
+    createhome: yes
+    name: futuregateway
+    shell: /bin/bash
+    state: present
+  become: yes
+
+- name: install dependencies (ant, openjdk-8-jdk, git)
+  apt:
+    name: '{{ item }}'
+    update_cache: yes
+  with_items:
+    - ant
+    - openjdk-8-jdk
+    - git
+  become: true
+
+- name: git-clone main repository
+  git:
+    dest: '{{ apiserverdaemon_install_dir }}'
+    repo: '{{ apiserverdaemon_git_repo_url }}'
+  become: true
+  become_user: futuregateway
+
+# FIXME: this is a workaround
+- name: create a missing directory
+  file:
+    path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/lib'
+    state: directory
+  become: true
+  become_user: futuregateway
+
+- name: build the artifact
+  command: /usr/bin/ant all
+  args:
+    chdir: '{{ apiserverdaemon_install_dir  }}'
+    creates: '{{ apiserverdaemon_war }}'
+  become: true
+  become_user: futuregateway

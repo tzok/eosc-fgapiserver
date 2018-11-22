@@ -62,12 +62,20 @@ services:
   #       - "DEBUG=1"
 
   fgapiserver:
-    from: 'ubuntu:xenial'
+    from: 'ubuntu:bionic'
     user: 'futuregateway'
     command: ['/bin/bash']
     working_dir: /home/futuregateway
     roles:
       - fgapiserver
+
+  apiserverdaemon:
+    from: 'ubuntu:bionic'
+    user: 'futuregateway'
+    command: ['/bin/bash']
+    working_dir: /home/futuregateway
+    roles:
+      - apiserverdaemon
 
 registries: {}
   # Add optional registries used for deployment. For example:
