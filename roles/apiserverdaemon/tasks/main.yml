@@ -24,28 +24,21 @@
     state: present
   become: yes
 
-- name: install dependencies (ant, openjdk-8-jdk, git)
+- name: install dependencies (ant, default-jdk, git, tomcat8)
   apt:
     name: '{{ item }}'
     update_cache: yes
   with_items:
     - ant
-    - openjdk-8-jdk
+    - default-jdk
     - git
+    - tomcat8
   become: true
 
 - name: git-clone main repository
   git:
     dest: '{{ apiserverdaemon_install_dir }}'
     repo: '{{ apiserverdaemon_git_repo_url }}'
-  become: true
-  become_user: futuregateway
-
-# FIXME: this is a workaround
-- name: create a missing directory
-  file:
-    path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/lib'
-    state: directory
   become: true
   become_user: futuregateway
 
@@ -56,3 +49,10 @@
     creates: '{{ apiserverdaemon_war }}'
   become: true
   become_user: futuregateway
+
+- name: copy the artifact to tomcat's directory
+  copy:
+    remote_src: yes
+    src: '{{ apiserverdaemon_war }}'
+    dest: /var/lib/tomcat8/webapps/
+  become: true
