@@ -16,14 +16,6 @@
   become_method: su
   when: not sudo.stat.exists
 
-- name: create user futuregateway
-  user:
-    createhome: yes
-    name: futuregateway
-    shell: /bin/bash
-    state: present
-  become: yes
-
 - name: install dependencies (ant, default-jdk, git, tomcat8)
   apt:
     name: '{{ item }}'
@@ -35,12 +27,16 @@
     - tomcat8
   become: true
 
+- name: clean apt cache
+  command: apt-get clean
+  become: true
+
 - name: git-clone main repository
   git:
     dest: '{{ apiserverdaemon_install_dir }}'
     repo: '{{ apiserverdaemon_git_repo_url }}'
   become: true
-  become_user: futuregateway
+  become_user: tomcat8
 
 - name: build the artifact
   command: /usr/bin/ant all
@@ -48,7 +44,7 @@
     chdir: '{{ apiserverdaemon_install_dir  }}'
     creates: '{{ apiserverdaemon_war }}'
   become: true
-  become_user: futuregateway
+  become_user: tomcat8
 
 - name: copy the artifact to tomcat's directory
   copy:
@@ -56,3 +52,10 @@
     src: '{{ apiserverdaemon_war }}'
     dest: /var/lib/tomcat8/webapps/
   become: true
+
+- name: remove leftover files
+  file:
+    path: '{{ apiserverdaeon_install_dir }}'
+    state: absent
+  become: true
+  become_user: tomcat8
