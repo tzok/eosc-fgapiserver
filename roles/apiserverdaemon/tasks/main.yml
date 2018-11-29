@@ -47,7 +47,7 @@
   copy:
     remote_src: yes
     src: '{{ apiserverdaemon_war }}'
-    dest: /var/lib/tomcat8/webapps/
+    dest: /var/lib/tomcat8/webapps/ROOT.war
   become: true
 
 - name: copy mysql-connector-java to tomcat's directory
@@ -57,7 +57,10 @@
     dest: /var/lib/tomcat8/lib/
   become: true
 
-- name: remove leftover files
+- name: remove unnecessary files
   file:
-    path: '{{ apiserverdaemon_install_dir }}'
+    path: '{{ item }}'
     state: absent
+  with_items:
+    - '{{ apiserverdaemon_install_dir }}'
+    - /var/lib/tomcat8/webapps/ROOT
