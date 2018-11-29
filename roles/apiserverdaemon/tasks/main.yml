@@ -16,7 +16,7 @@
   become_method: su
   when: not sudo.stat.exists
 
-- name: install dependencies (ant, default-jdk, git, tomcat8)
+- name: install dependencies (ant, default-jdk, git, libmysql-java, tomcat8)
   apt:
     name: '{{ item }}'
     update_cache: yes
@@ -24,6 +24,7 @@
     - ant
     - default-jdk
     - git
+    - libmysql-java
     - tomcat8
   become: true
 
@@ -47,6 +48,13 @@
     remote_src: yes
     src: '{{ apiserverdaemon_war }}'
     dest: /var/lib/tomcat8/webapps/
+  become: true
+
+- name: copy mysql-connector-java to tomcat's directory
+  copy:
+    remote_src: yes
+    src: /usr/share/java/mysql-connector-java.jar
+    dest: /var/lib/tomcat8/lib/
   become: true
 
 - name: remove leftover files
