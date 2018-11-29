@@ -35,16 +35,12 @@
   git:
     dest: '{{ apiserverdaemon_install_dir }}'
     repo: '{{ apiserverdaemon_git_repo_url }}'
-  become: true
-  become_user: tomcat8
 
 - name: build the artifact
   command: /usr/bin/ant all
   args:
     chdir: '{{ apiserverdaemon_install_dir  }}'
     creates: '{{ apiserverdaemon_war }}'
-  become: true
-  become_user: tomcat8
 
 - name: copy the artifact to tomcat's directory
   copy:
@@ -55,7 +51,5 @@
 
 - name: remove leftover files
   file:
-    path: '{{ apiserverdaeon_install_dir }}'
+    path: '{{ apiserverdaemon_install_dir }}'
     state: absent
-  become: true
-  become_user: tomcat8
