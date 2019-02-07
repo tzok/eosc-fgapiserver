@@ -65,8 +65,8 @@ services:
   fgapiserver:
     from: ubuntu:xenial
     user: futuregateway
-    command: ['/bin/bash']
-    working_dir: /home/futuregateway
+    command: ['/usr/bin/python', 'fgapiserver.py']
+    working_dir: /home/futuregateway/fgapiserver
     roles:
       - fgapiserver
 
