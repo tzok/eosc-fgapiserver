@@ -37,6 +37,22 @@
     dest: '{{ apiserverdaemon_install_dir }}'
     repo: '{{ apiserverdaemon_git_repo_url }}'
 
+- name: fix hardcoded localhosts to use docker-compose names
+  lineinfile:
+    path: '{{ item.path }}'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { path: '{{ apiserverdaemon_install_dir }}/src/java/it/infn/ct/APIServerDaemonConfig.java', regexp: 'apisrvDBHost = "localhost"', line: 'private String apisrvDBHost = "fgdb";' }
+    - { path: '{{ apiserverdaemon_install_dir }}/src/java/it/infn/ct/APIServerDaemonConfig.java', regexp: 'utdbHost = "localhost"', line: 'private String utdbHost = "fgdb";' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/META-INF/context.xml', regexp: 'jdbc:mysql://localhost:3306/fgapiserver', line: '<Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxIdle="30" maxTotal="100" maxWaitMillis="10000" name="jdbc/fgApiServerPool" password="fgapiserver_password" type="javax.sql.DataSource" url="jdbc:mysql://fgdb:3306/fgapiserver" username="fgapiserver"/>' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties', regexp: 'fgapisrv_frontend   = http://localhost:8888', line: 'fgapisrv_frontend   = http://fgapiserver:8888' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties', regexp: 'fgapisrv_ptvtokensrv= http://localhost:8889/get-token', line: 'fgapisrv_ptvtokensrv= http://fgapiserver:8889/get-token' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/classes/it/infn/ct/GridEngineDaemon.properties', regexp: 'apisrv_dbhost = localhost', line: 'apisrv_dbhost = fgdb' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/classes/it/infn/ct/GridEngineDaemon.properties', regexp: 'utdb_host = localhost', line: 'utdb_host = fgdb' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties', regexp: 'apisrv_dbhost = localhost', line: 'apisrv_dbhost = fgdb' }
+    - { path: '{{ apiserverdaemon_install_dir }}/web/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties', regexp: 'utdb_host = localhost', line: 'utdb_host = fgdb' }
+
 - name: build the artifact
   command: /usr/bin/ant all
   args:
