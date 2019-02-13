@@ -34,6 +34,10 @@
     - python-pip
   become: true
 
+- name: clean apt cache
+  command: apt-get clean
+  become: true
+
 - name: git-clone main repository
   git:
     dest: '{{ fgapiserver_install_dir }}'

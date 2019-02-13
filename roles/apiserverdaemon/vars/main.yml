@@ -1,0 +1,4 @@
+---
+apiserverdaemon_install_dir: /tmp/apiserverdaemon
+apiserverdaemon_git_repo_url: https://github.com/FutureGatewayFramework/APIServerDaemon.git
+apiserverdaemon_war: /tmp/apiserverdaemon/dist/APIServerDaemon.war

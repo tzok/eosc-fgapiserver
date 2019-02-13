@@ -8,7 +8,8 @@ settings:
     base: ubuntu:xenial
     # roles_path:   # Specify a local path containing Ansible roles
     # volumes:      # Provide a list of volumes to mount
-    # environment:  # List or mapping of environment variables
+    environment:
+      - DOCKER_CLIENT_TIMEOUT=600
 
   # Set the name of the project. Defaults to basename of the project directory.
   # For built services, concatenated with service name to form the built image name.
@@ -62,12 +63,22 @@ services:
   #       - "DEBUG=1"
 
   fgapiserver:
-    from: 'ubuntu:xenial'
-    user: 'futuregateway'
-    command: ['/bin/bash']
-    working_dir: /home/futuregateway
+    from: ubuntu:xenial
+    user: futuregateway
+    command: ['/usr/bin/python', 'fgapiserver.py']
+    working_dir: /home/futuregateway/fgapiserver
     roles:
       - fgapiserver
+
+  apiserverdaemon:
+    from: ubuntu:xenial
+    user: tomcat8
+    command: ['/usr/share/tomcat8/bin/catalina.sh', 'run']
+    working_dir: /var/lib/tomcat8
+    roles:
+      - apiserverdaemon
+    environment:
+      - CATALINA_BASE=/var/lib/tomcat8
 
 registries: {}
   # Add optional registries used for deployment. For example:
