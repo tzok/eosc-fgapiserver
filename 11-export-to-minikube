@@ -1,0 +1,4 @@
+#! /bin/bash
+for image in eosc/fgdb eosc/fgapiserver eosc/apiserverdaemon; do
+    docker save $image | ssh -i /home/tzok/.minikube/machines/minikube/id_rsa docker@$(minikube ip) docker load
+done

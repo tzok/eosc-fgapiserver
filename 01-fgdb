@@ -1,0 +1,16 @@
+#! /bin/bash
+container=$(buildah from mariadb)
+
+buildah copy --chown mysql:mysql $container \
+    https://raw.githubusercontent.com/FutureGatewayFramework/fgAPIServer/master/fgapiserver_db.sql \
+    /docker-entrypoint-initdb.d/fgapiserver_db.sql
+buildah copy --chown mysql:mysql $container \
+    https://raw.githubusercontent.com/FutureGatewayFramework/fgAPIServer/master/fgapiserver_dbusr8.sql \
+    /docker-entrypoint-initdb.d/fgapiserver_dbusr8.sql
+
+buildah config \
+    --env MYSQL_RANDOM_ROOT_PASSWORD=yes \
+    $container
+
+buildah commit $container eosc/fgdb
+buildah rm $container

@@ -2,33 +2,37 @@
 
 # Description
 
-This is a project for [Ansible Container](https://www.ansible.com/integrations/containers/ansible-container). It contains description in [Ansible](https://www.ansible.com/) format on how to build Docker image. Specifically, it creates an image based on `ubuntu:xenial` and installs [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) on top of it (with all required dependencies).
+This is a project for [Buildah](http://buildah.io/). It contains scripts responsible for building Docker image. Specifically, it creates:
+
+- an image based on `mariadb` bootstrapped with database from [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) project
+- an image based on `ubuntu:xenial` running Python server from [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) project
+- an image based on `ubuntu:xenial` running Apache Tomcat server from [FutureGatewayFramework/APIServerDaemon](https://github.com/FutureGatewayFramework/APIServerDaemon) project
 
 # Requirements
 
-- Docker
-- Python
+- Buildah
 
 # Preparation
 
-``` sh
-$ git clone https://github.com/ansible/ansible-container.git
-$ virtualenv venv
-$ source venv/bin/activate
-(venv) $ pip install -e ansible-container
+- Build all images:
+
+```
+./01-fgdb
+./02-apiserverdaemon
+./03-fgapiserver
 ```
 
-# Usage
+- Save them in Docker:
 
-``` sh
-$ git clone https://github.com/tzok/eosc-fgapiserver
-$ source venv/bin/activate
-(venv) $ cd eosc-fgapiserver
-(venv) $ ansible-container build
+```
+./10-export-to-docker
 ```
 
-By default, this will create:
+- Save them in Minikube:
 
-- Docker image named `eosc-fgapiserver`
-- With user `futuregateway`
-- And `fgAPIServer` installed in `/home/futuregateway/fgAPIServer`
+```
+./11-export-to-minikube
+```
+
+- Example Kubernetes specification is in `12-kubernetes` directory
+- Alternatively, Docker Composer specification is in `13-docker-compose` directory

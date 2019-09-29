@@ -1,0 +1,82 @@
+--- src/java/it/infn/ct/APIServerDaemonConfig.java.orig	2019-05-21 09:45:29.963942889 +0200
++++ src/java/it/infn/ct/APIServerDaemonConfig.java	2019-05-21 09:45:44.784574231 +0200
+@@ -94,7 +94,7 @@
+     /**
+      * APIServerDaemon database host.
+      */
+-    private String apisrvDBHost = "localhost";
++    private String apisrvDBHost = "fgdb";
+     /**
+      * APIServerDaemon database port.
+      */
+@@ -170,7 +170,7 @@
+     /**
+      * GridEngine' UsersTrackingDB database name.
+      */
+-    private String utdbHost = "localhost";
++    private String utdbHost = "fgdb";
+     /**
+      * GridEngine' UsersTrackingDB database port number.
+      */
+--- web/META-INF/context.xml.orig	2019-05-21 09:46:01.385279168 +0200
++++ web/META-INF/context.xml	2019-05-21 09:46:14.572504189 +0200
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <Context antiJARLocking="true" crossContext="true" path="/APIServerDaemon">
+-  <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxIdle="30" maxTotal="100" maxWaitMillis="10000" name="jdbc/fgApiServerPool" password="fgapiserver_password" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/fgapiserver" username="fgapiserver"/>
++  <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxIdle="30" maxTotal="100" maxWaitMillis="10000" name="jdbc/fgApiServerPool" password="fgapiserver_password" type="javax.sql.DataSource" url="jdbc:mysql://fgdb:3306/fgapiserver" username="fgapiserver"/>
+   <!-- GridEngine connection pools are globally defined -->
+   <ResourceLink global="jdbc/UserTrackingPool" name="jdbc/UserTrackingPool" type="javax.sql.DataSource"/>
+   <ResourceLink global="jdbc/gehibernatepool" name="jdbc/gehibernatepool" type="javax.sql.DataSource"/>
+--- web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties.orig	2019-05-21 09:46:32.886610626 +0200
++++ web/WEB-INF/classes/it/infn/ct/ToscaIDC.properties	2019-05-21 09:46:58.717696622 +0200
+@@ -27,7 +27,7 @@
+ # PTV configuration
+ # PTV may be required in case FG uses this AAI mechanism
+ 
+-fgapisrv_frontend   = http://localhost:8888
+-fgapisrv_ptvtokensrv= http://localhost:8889/get-token
++fgapisrv_frontend   = http://fgapiserver:8888
++fgapisrv_ptvtokensrv= http://fgapiserver:8889/get-token
+ fgapisrv_ptvuser    = tokenver_user
+ fgapisrv_ptvpass    = tokenver_pass
+--- web/WEB-INF/classes/it/infn/ct/GridEngineDaemon.properties.orig	2019-05-21 09:47:09.081464266 +0200
++++ web/WEB-INF/classes/it/infn/ct/GridEngineDaemon.properties	2019-05-21 09:47:36.682617172 +0200
+@@ -20,7 +20,7 @@
+ #
+ # Author: Riccardo Bruno (INFN) riccardo.bruno@ct.infn.it
+ #
+-apisrv_dbhost = localhost
++apisrv_dbhost = fgdb
+ apisrv_dbport = 3306
+ apisrv_dbuser = geapiserver
+ apisrv_dbpass = geapiserver_password
+@@ -37,7 +37,7 @@
+ 
+ #utdb_jndi = jdbc/UserTrackingPool
+ utdb_jndi =
+-utdb_host = localhost
++utdb_host = fgdb
+ utdb_port = 3306
+ utdb_user = tracking_user
+ utdb_pass = usertracking
+--- web/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties.orig	2019-05-21 09:47:45.426314624 +0200
++++ web/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties	2019-05-21 09:47:59.353560205 +0200
+@@ -20,7 +20,7 @@
+ #
+ # Author: Riccardo Bruno (INFN) riccardo.bruno@ct.infn.it
+ #
+-apisrv_dbhost = localhost
++apisrv_dbhost = fgdb
+ apisrv_dbport = 3306
+ apisrv_dbuser = fgapiserver
+ apisrv_dbpass = fgapiserver_password
+@@ -51,7 +51,7 @@
+ # Not specifying the JNDI as below GridEngine UTDB will be
+ # contacted using following connection settings
+ #utdb_jndi =
+-utdb_host = localhost
++utdb_host = fgdb
+ utdb_port = 3306
+ utdb_user = tracking_user
+ utdb_pass = usertracking
