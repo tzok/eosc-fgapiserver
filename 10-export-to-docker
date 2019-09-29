@@ -1,0 +1,4 @@
+#! /bin/bash
+for image in eosc/fgdb eosc/fgapiserver eosc/apiserverdaemon; do
+    buildah push $image docker-daemon:$image:latest
+done

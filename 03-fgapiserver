@@ -1,0 +1,29 @@
+#! /bin/bash
+container=$(buildah from ubuntu:xenial)
+
+buildah run $container \
+    apt-get update -y
+buildah run $container \
+    apt-get install -y \
+    git \
+    libmysqlclient-dev \
+    python-pip
+
+buildah run $container \
+    git clone https://github.com/FutureGatewayFramework/fgAPIServer
+buildah run $container \
+    pip install -r /fgAPIServer/requirements.txt
+buildah config \
+    --workingdir /fgAPIServer \
+    --entrypoint '[ "/usr/bin/python" ]' \
+    --cmd fgapiserver.py \
+    $container
+
+#buildah copy $container \
+#    files/fgAPIServer.patch \
+#    ./
+#buildah run $container \
+#    bash -c 'patch -p0 < fgAPIServer.patch'
+
+buildah commit $container eosc/fgapiserver
+buildah rm $container

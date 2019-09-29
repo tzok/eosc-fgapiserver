@@ -1,0 +1,23 @@
+# vim: filetype=ansible
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: futuregateway
+spec:
+  containers:
+    - name: fgdb
+      image: eosc/fgdb
+      imagePullPolicy: Never
+
+    - name: fgapiserver
+      image: eosc/fgapiserver
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8888
+
+    - name: apiserverdaemon
+      image: eosc/apiserverdaemon
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8080

@@ -1,0 +1,6 @@
+kubectl create -f fg-pod.yaml
+kubectl delete -f fg-pod.yaml
+
+kubectl logs futuregateway fgdb
+kubectl logs futuregateway fgapiserver
+kubectl logs futuregateway apiserverdaemon
