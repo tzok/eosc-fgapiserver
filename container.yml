@@ -5,7 +5,7 @@ settings:
     # The Conductor container does the heavy lifting, and provides a portable
     # Python runtime for building your target containers. It should be derived
     # from the same distribution as you're building your target containers with.
-    base: ubuntu:xenial
+    base: ubuntu:bionic
     # roles_path:   # Specify a local path containing Ansible roles
     # volumes:      # Provide a list of volumes to mount
     environment:
@@ -63,7 +63,7 @@ services:
   #       - "DEBUG=1"
 
   fgapiserver:
-    from: ubuntu:xenial
+    from: ubuntu:bionic
     user: futuregateway
     command: ['/usr/bin/python', 'fgapiserver.py']
     working_dir: /home/futuregateway/fgapiserver
@@ -71,7 +71,7 @@ services:
       - fgapiserver
 
   apiserverdaemon:
-    from: ubuntu:xenial
+    from: ubuntu:bionic
     user: tomcat8
     command: ['/usr/share/tomcat8/bin/catalina.sh', 'run']
     working_dir: /var/lib/tomcat8

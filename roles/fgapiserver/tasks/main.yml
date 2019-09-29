@@ -56,7 +56,6 @@
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
   with_items:
-    - { regexp: '^fgapisrv_dbver.*', line: 'fgapisrv_dbver = 0.0.11' }
     - { regexp: '^fgapisrv_db_host.*', line: 'fgapisrv_db_host = fgdb' }
   become: true
   become_user: futuregateway
