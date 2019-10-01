@@ -16,6 +16,14 @@ spec:
       ports:
         - containerPort: 8888
 
+    - name: fgapiserver-ptv
+      image: eosc/fgapiserver
+      args:
+        - fgapiserver_ptv.py
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8889
+
     - name: apiserverdaemon
       image: eosc/apiserverdaemon
       imagePullPolicy: Never

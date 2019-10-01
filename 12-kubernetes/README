@@ -1,6 +1,17 @@
-kubectl create -f fg-pod.yaml
-kubectl delete -f fg-pod.yaml
+create:
+    kubectl create -f fg-pod.yaml
 
-kubectl logs futuregateway fgdb
-kubectl logs futuregateway fgapiserver
-kubectl logs futuregateway apiserverdaemon
+port-forward:
+    kubectl port-forward futuregateway 8080:8888
+    curl http://localhost:8080/
+
+delete:
+    kubectl delete -f fg-pod.yaml
+
+troubleshoot:
+    kubectl describe pod futuregateway
+    kubectl logs futuregateway fgdb
+    kubectl logs futuregateway fgapiserver
+    kubectl logs futuregateway apiserverdaemon
+
+
