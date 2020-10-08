@@ -9,7 +9,7 @@ services:
     links:
       - fgdb
     ports:
-      - 8080:8888
+      - 8080:80
 
   apiserverdaemon:
     image: eosc/apiserverdaemon

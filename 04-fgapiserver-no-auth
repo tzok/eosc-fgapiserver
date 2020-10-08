@@ -1,0 +1,8 @@
+#! /bin/bash
+container=$(buildah from eosc/fgapiserver)
+
+buildah run $container \
+    sed -i 's/fgapisrv_notoken *=.*/fgapisrv_notoken = True/g' fgapiserver.conf
+
+buildah commit $container eosc/fgapiserver-no-auth
+buildah rm $container

@@ -5,6 +5,10 @@ port-forward:
     kubectl port-forward futuregateway 8080:8888
     curl http://localhost:8080/
 
+integration tests:
+    cd ~/code/java/indigo-parent/indigoclient
+    mvn test -P IntegrationTests -Dfuturegateway.uri=http://localhost:8080/
+
 delete:
     kubectl delete -f fg-pod.yaml
 

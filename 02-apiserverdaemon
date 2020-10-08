@@ -1,44 +1,30 @@
 #! /bin/bash
-container=$(buildah from ubuntu:xenial)
+REPO_FORK=https://github.com/tzok/APIServerDaemon.git
+BRANCH=develop
 
-buildah run $container \
-    apt-get update -y
-buildah run $container \
-    apt-get install -y \
-    ant \
-    default-jdk-headless \
-    git \
-    libmysql-java \
-    tomcat8
+if [[ ! -f apiserverdaemon-0.1-SNAPSHOT.war ]]; then
+    aux=$(buildah from maven)
 
-buildah run $container \
-    git clone https://github.com/FutureGatewayFramework/APIServerDaemon.git
-buildah config \
-    --workingdir /APIServerDaemon \
-    $container
+    buildah run $aux \
+        git clone -b FutureGateway https://github.com/tzok/grid-and-cloud-engine.git
+    buildah run $aux \
+        bash -c 'cd grid-and-cloud-engine; mvn install'
+    buildah run $aux \
+        git clone -b ${BRANCH} ${REPO_FORK}
+    buildah run $aux \
+        bash -c 'cd APIServerDaemon; mvn package'
 
-#buildah copy $container \
-#    files/APIServerDaemon.patch \
-#    ./
-#buildah run $container \
-#    bash -c 'patch -p0 < APIServerDaemon.patch'
+    buildah run $aux \
+        cat /APIServerDaemon/target/apiserverdaemon-0.1-SNAPSHOT.war \
+        > apiserverdaemon-0.1-SNAPSHOT.war
+    buildah rm $aux
+fi
 
-buildah run $container \
-    ant all
-buildah run $container \
-    cp /APIServerDaemon/dist/APIServerDaemon.war /var/lib/tomcat8/webapps/ROOT.war
-buildah run $container \
-    ln --symbolic /usr/share/java/mysql-connector-java.jar /var/lib/tomcat8/lib/
-buildah run $container \
-    find /var/lib/tomcat8/webapps/ROOT/ /APIServerDaemon/ /root/.ivy2/ -delete
+container=$(buildah from tomcat)
 
-buildah config \
-    --entrypoint '[ "/usr/share/tomcat8/bin/catalina.sh" ]' \
-    --cmd 'run' \
-    --env CATALINA_BASE=/var/lib/tomcat8 \
-    --port 8080 \
-    --workingdir / \
-    $container
+buildah copy $container \
+    apiserverdaemon-0.1-SNAPSHOT.war \
+    /usr/local/tomcat/webapps/ROOT.war
 
 buildah commit $container eosc/apiserverdaemon
 buildah rm $container
