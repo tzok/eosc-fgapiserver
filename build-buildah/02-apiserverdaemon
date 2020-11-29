@@ -1,0 +1,33 @@
+#! /bin/bash
+REPO_FORK=https://github.com/tzok/APIServerDaemon.git
+BRANCH=develop
+
+if [[ ! -f apiserverdaemon-0.1-SNAPSHOT.war ]]; then
+    aux=$(buildah from maven)
+
+    buildah run $aux \
+        git clone -b FutureGateway https://github.com/tzok/grid-and-cloud-engine.git
+    buildah run $aux \
+        bash -c 'cd grid-and-cloud-engine; mvn install'
+    buildah run $aux \
+        git clone -b ${BRANCH} ${REPO_FORK} apiserverdaemon
+    buildah copy $aux \
+        files/apiserverdaemon.patch \
+        apiserverdaemon/
+    buildah run $aux \
+        bash -c 'cd apiserverdaemon; patch -p0 < apiserverdaemon.patch; mvn package'
+
+    buildah run $aux \
+        cat /APIServerDaemon/target/apiserverdaemon-0.1-SNAPSHOT.war \
+        > apiserverdaemon-0.1-SNAPSHOT.war
+    buildah rm $aux
+fi
+
+container=$(buildah from tomcat)
+
+buildah copy $container \
+    apiserverdaemon-0.1-SNAPSHOT.war \
+    /usr/local/tomcat/webapps/ROOT.war
+
+buildah commit $container eosc/apiserverdaemon
+buildah rm $container

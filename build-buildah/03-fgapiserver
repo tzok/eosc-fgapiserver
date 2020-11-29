@@ -1,0 +1,25 @@
+#! /bin/bash
+container=$(buildah from ubuntu:xenial)
+
+buildah run $container \
+    apt-get update -y
+buildah run $container \
+    apt-get install -y \
+    git \
+    libmysqlclient-dev \
+    socat \
+    python-pip
+
+buildah run $container \
+    git clone https://github.com/FutureGatewayFramework/fgAPIServer
+    # git clone --branch feature-restore-date-format-sql-function https://github.com/tzok/fgAPIServer
+    # git clone --branch date_format https://github.com/FutureGatewayFramework/fgAPIServer
+buildah run $container \
+    pip install -r /fgAPIServer/requirements.txt
+buildah config \
+    --workingdir /fgAPIServer \
+    --cmd '/usr/bin/python fgapiserver.py' \
+    $container
+
+buildah commit $container eosc/fgapiserver
+buildah rm $container
