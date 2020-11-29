@@ -2,37 +2,16 @@
 
 # Description
 
-This is a project for [Buildah](http://buildah.io/). It contains scripts responsible for building Docker image. Specifically, it creates:
+This is a project for containarized FutureGateway. It contains descriptions for building the images either via (1) ansible-container [deprecated], (2) buildah or (3) staged Dockerfile. It also contains documentation on how to run it via (1) Kubernetes, (2) Docker Compose and (3) plain Docker.
 
-- an image based on `mariadb` bootstrapped with database from [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) project
-- an image based on `ubuntu:xenial` running Python server from [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) project
-- an image based on `ubuntu:xenial` running Apache Tomcat server from [FutureGatewayFramework/APIServerDaemon](https://github.com/FutureGatewayFramework/APIServerDaemon) project
+# Building
 
-# Requirements
+The building procedures create the following images:
 
-- Buildah
+- `eosc/fgdb`: an image based on `mariadb` bootstrapped with database from [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) project
+- `eosc/fgapiserver`: an image based on `ubuntu:xenial` running Python server from [FutureGatewayFramework/fgAPIServer](https://github.com/FutureGatewayFramework/fgAPIServer) project
+- `eosc/apiserverdaemon`: an image based on `ubuntu:xenial` running Apache Tomcat server from [FutureGatewayFramework/APIServerDaemon](https://github.com/FutureGatewayFramework/APIServerDaemon) project
 
-# Preparation
+# Running
 
-- Build all images:
-
-```
-./01-fgdb
-./02-apiserverdaemon
-./03-fgapiserver
-```
-
-- Save them in Docker:
-
-```
-./10-export-to-docker
-```
-
-- Save them in Minikube:
-
-```
-./11-export-to-minikube
-```
-
-- Example Kubernetes specification is in `12-kubernetes` directory
-- Alternatively, Docker Composer specification is in `13-docker-compose` directory
+The three different approaches to run the service are documented in their own directories.

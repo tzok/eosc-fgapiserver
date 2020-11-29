@@ -1,0 +1,50 @@
+--- fgapiserver.conf	2020-11-29 10:59:09.302432074 +0100
++++ fgapiserver.conf.patched	2020-11-28 19:31:55.203993235 +0100
+@@ -53,22 +53,22 @@
+ fgjson_indent       = 4
+ fgapisrv_key        =
+ fgapisrv_crt        =
+-fgapisrv_logcfg     = fgapiserver_log.conf
++fgapisrv_logcfg     = /var/www/fgapiserver/fgapiserver_log.conf
+ fgapisrv_dbver      = 0.0.13
+ fgapisrv_secret     = 0123456789ABCDEF
+-fgapisrv_notoken    = False 
+-fgapisrv_notokenusr = test
++fgapisrv_notoken    = True
++fgapisrv_notokenusr = futuregateway
+ fgapisrv_lnkptvflag = True
+ fgapisrv_ptvendpoint= http://localhost:8889/checktoken
+ fgapisrv_ptvuser    = tokenver_user
+ fgapisrv_ptvpass    = tokenver_pass
+ fgapisrv_ptvdefusr  = futuregateway
+ fgapisrv_ptvdefgrp  = administrator
+-fgapisrv_ptvmapfile = fgapiserver_ptvmap.json
++fgapisrv_ptvmapfile = /var/www/fgapiserver/fgapiserver_ptvmap.json
+ 
+ # fgapiserver database settings
+ [fgapiserver_db]
+-fgapisrv_db_host = localhost
++fgapisrv_db_host = fgdb
+ fgapisrv_db_port = 3306
+ fgapisrv_db_user = fgapiserver
+ fgapisrv_db_pass = fgapiserver_password
+@@ -76,7 +76,7 @@
+ 
+ # gridengine EI database settings
+ [gridengine_ei]
+-utdb_host        = localhost
++utdb_host        = fgdb
+ utdb_port        = 3306
+ utdb_user        = localhost
+ utdb_pass        = fgapiserver_password
+--- fgapiserver_log.conf	2020-11-28 19:32:50.027719043 +0100
++++ fgapiserver_log.conf.patched	2020-11-28 16:39:35.235122369 +0100
+@@ -20,7 +20,7 @@
+ [handler_RotatingFileHandler]
+ level=DEBUG
+ class=handlers.RotatingFileHandler
+-args=('fgapiserver.log','a',536870912,5)
++args=('/tmp/fgapiserver.log','a',536870912,5)
+ formatter=simpleFormatter
+ 
+ [formatter_simpleFormatter]
